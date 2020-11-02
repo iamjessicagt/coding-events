@@ -4,10 +4,7 @@ import org.launchcode.codingevents.data.EventData;
 import org.launchcode.codingevents.models.Event;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +25,12 @@ public class EventController {
         return "events/create";
     }
 
+
+    //allows controller to use model Event to create new Event class, needs to use annotation @ModelAttribute!
+    //now the view have to match with the field names of the model class
     @PostMapping("create")
-    public String createEvent(@RequestParam String eventName, @RequestParam String eventDescription){
-        EventData.addEvent(new Event(eventName, eventDescription));
+    public String createEvent(@ModelAttribute Event newEvent){
+        EventData.addEvent(newEvent);
         return "redirect:";
     }
 
@@ -48,6 +48,24 @@ public class EventController {
                 EventData.remove(id);
             }
         }
+        return "redirect:";
+    }
+
+    @GetMapping("edit/{eventId}") //lives at /events/edit/eventId
+    public String displayEditForm(Model model, @PathVariable int eventId) {
+        Event event = EventData.getById(eventId);
+        model.addAttribute("event", event);
+        if(event != null) {
+        model.addAttribute("title", "EDIT EVENT: " + event.getName() + " - ID: " + event.getId());
+        }
+        return "events/edit";
+    }
+
+    @PostMapping("edit")
+    public String processEditForm(int eventId, String name, String description) {
+        Event event = EventData.getById(eventId);
+        event.setName(name);
+        event.setDescription(description);
         return "redirect:";
     }
 }
