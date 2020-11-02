@@ -4,10 +4,10 @@ import org.launchcode.codingevents.data.EventData;
 import org.launchcode.codingevents.models.Event;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("events")
@@ -21,7 +21,9 @@ public class EventController {
 
     //lives at /events/create
     @GetMapping("create")
-    public String renderCreateEventForm(){
+    public String displayCreateEventForm(Model model){
+        model.addAttribute("title", "Create Event");
+        model.addAttribute(new Event());
         return "events/create";
     }
 
@@ -29,9 +31,13 @@ public class EventController {
     //allows controller to use model Event to create new Event class, needs to use annotation @ModelAttribute!
     //now the view have to match with the field names of the model class
     @PostMapping("create")
-    public String createEvent(@ModelAttribute Event newEvent){
-        EventData.addEvent(newEvent);
-        return "redirect:";
+    public String processCreateEventForm(@ModelAttribute @Valid Event newEvent, Errors errors, Model model){
+        if (errors.hasErrors()) {
+            model.addAttribute("title", "Create Event");
+            return "events/create";
+        }
+            EventData.addEvent(newEvent);
+            return "redirect:";
     }
 
     @GetMapping("delete")

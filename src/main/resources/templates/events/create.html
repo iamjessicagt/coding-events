@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
 <head th:replace="fragments :: head"></head>
+
 <body class="container">
-<h1>Create Events</h1>
+
 <header th:replace="fragments :: header"></header>
 
-<form method="POST" action="/events/create">
+<form method="POST" th:action="@{/events/create}">
     <div class="form-group">
         <label>Name
-            <input type="text" name="name" class="form-control">
+            <input th:field="${event.name}" class="form-control">
         </label>
+        <p class="error" th:errors="${event.name}"></p>
+    </div>
+    <div class="form-group">
         <label>Description
-            <input type="text" name="description" class="form-control">
+            <input th:field="${event.description}" class="form-control">
         </label>
+        <p class="error" th:errors="${event.description}"></p>
+    </div>
+    <div class="form-group">
+        <label>Email
+            <input th:field="${event.contactEmail}" class="form-control">
+        </label>
+        <p class="error" th:errors="${event.contactEmail}"></p>
     </div>
     <div class="form-group">
         <input type="submit" value="Create Event" class="btn btn-success">
